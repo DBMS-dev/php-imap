@@ -1,8 +1,10 @@
 <?php
+
 /**
  * @author Barbushin Sergey http://linkedin.com/in/barbushin
  * @author BAPCLTD-Marv
  */
+
 declare(strict_types=1);
 
 namespace PhpImap;
@@ -187,21 +189,23 @@ final class Imap
     public static function close($imap_stream, int $flag = 0): bool
     {
         \imap_errors(); // flush errors
-
+        \imap_alerts();
         /** @var int */
         $flag = $flag;
+        $result = true;
+        if ($imap_stream && is_resource($imap_stream)) {
+            $result = \imap_close(self::EnsureConnection($imap_stream, __METHOD__, 1), $flag);
 
-        $result = \imap_close(self::EnsureConnection($imap_stream, __METHOD__, 1), $flag);
+            if (false === $result) {
+                $message = 'Could not close imap connection';
 
-        if (false === $result) {
-            $message = 'Could not close imap connection';
+                if (CL_EXPUNGE === ($flag & CL_EXPUNGE)) {
+                    $message .= ', messages may not have been expunged';
+                }
 
-            if (CL_EXPUNGE === ($flag & CL_EXPUNGE)) {
-                $message .= ', messages may not have been expunged';
+                $message .= '!';
+                throw new UnexpectedValueException($message, 0, self::HandleErrors(\imap_errors(), 'imap_close'));
             }
-
-            $message .= '!';
-            throw new UnexpectedValueException($message, 0, self::HandleErrors(\imap_errors(), 'imap_close'));
         }
 
         return $result;
@@ -351,7 +355,7 @@ final class Imap
         int $options = 0
     ): string {
         if (!\is_string($section) && !\is_int($section)) {
-            throw new InvalidArgumentException('Argument 3 passed to '.__METHOD__.'() must be a string or integer, '.\gettype($section).' given!');
+            throw new InvalidArgumentException('Argument 3 passed to ' . __METHOD__ . '() must be a string or integer, ' . \gettype($section) . ' given!');
         }
 
         \imap_errors(); // flush errors
@@ -707,7 +711,7 @@ final class Imap
             $lastError = \imap_last_error();
 
             if ('' !== \trim($lastError)) {
-                throw new UnexpectedValueException('IMAP error:'.$lastError);
+                throw new UnexpectedValueException('IMAP error:' . $lastError);
             }
 
             throw new UnexpectedValueException('Could not open mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_open'));
@@ -1080,7 +1084,7 @@ final class Imap
     private static function EnsureResource($maybe, string $method, int $argument)
     {
         if (!$maybe || !\is_resource($maybe)) {
-            throw new InvalidArgumentException('Argument '.(string) $argument.' passed to '.$method.' must be a valid resource!');
+            throw new InvalidArgumentException('Argument ' . (string) $argument . ' passed to ' . $method . ' must be a valid resource!');
         }
 
         /** @var resource */
@@ -1099,7 +1103,7 @@ final class Imap
         try {
             return self::EnsureResource($maybe, $method, $argument);
         } catch (Throwable $e) {
-            throw new Exceptions\ConnectionException('Argument '.(string) $argument.' passed to '.$method.' must be valid resource!', 0, $e);
+            throw new Exceptions\ConnectionException('Argument ' . (string) $argument . ' passed to ' . $method . ' must be valid resource!', 0, $e);
         }
     }
 
@@ -1109,10 +1113,10 @@ final class Imap
     private static function HandleErrors($errors, string $method): UnexpectedValueException
     {
         if ($errors) {
-            return new UnexpectedValueException('IMAP method '.$method.'() failed with error: '.\implode('. ', $errors));
+            return new UnexpectedValueException('IMAP method ' . $method . '() failed with error: ' . \implode('. ', $errors));
         }
 
-        return new UnexpectedValueException('IMAP method '.$method.'() failed!');
+        return new UnexpectedValueException('IMAP method ' . $method . '() failed!');
     }
 
     /**
@@ -1125,7 +1129,7 @@ final class Imap
         bool $allow_sequence = false
     ): string {
         if (!\is_int($msg_number) && !\is_string($msg_number)) {
-            throw new InvalidArgumentException('Argument 1 passed to '.__METHOD__.'() must be an integer or a string!');
+            throw new InvalidArgumentException('Argument 1 passed to ' . __METHOD__ . '() must be an integer or a string!');
         }
 
         $regex = '/^\d+:\d+$/';
@@ -1139,7 +1143,7 @@ final class Imap
         if (\is_int($msg_number) || \preg_match('/^\d+$/', $msg_number)) {
             return \sprintf('%1$s:%1$s', $msg_number);
         } elseif (1 !== \preg_match($regex, $msg_number)) {
-            throw new InvalidArgumentException('Argument '.(string) $argument.' passed to '.$method.$suffix);
+            throw new InvalidArgumentException('Argument ' . (string) $argument . ' passed to ' . $method . $suffix);
         }
 
         return $msg_number;
