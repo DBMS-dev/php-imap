@@ -90,14 +90,14 @@ class Mailbox
 
     const IMAP_OPTIONS_SUPPORTED_VALUES =
         OP_READONLY // 2
-        | OP_ANONYMOUS // 4
-        | OP_HALFOPEN // 64
-        | CL_EXPUNGE // 32768
-        | OP_DEBUG // 1
-        | OP_SHORTCACHE // 8
-        | OP_SILENT // 16
-        | OP_PROTOTYPE // 32
-        | OP_SECURE // 256
+            | OP_ANONYMOUS // 4
+            | OP_HALFOPEN // 64
+            | CL_EXPUNGE // 32768
+            | OP_DEBUG // 1
+            | OP_SHORTCACHE // 8
+            | OP_SILENT // 16
+            | OP_PROTOTYPE // 32
+            | OP_SECURE // 256
     ;
 
     /** @var string */
@@ -179,7 +179,11 @@ class Mailbox
      */
     public function __destruct()
     {
-        $this->disconnect();
+        try {
+            $this->disconnect();
+        } catch (\Throwable $e) {
+            //never good idea to throw an exception in destructor
+        }
     }
 
     /**
@@ -250,7 +254,7 @@ class Mailbox
         $supported_encodings = \array_map('strtoupper', \mb_list_encodings());
 
         if (!\in_array($serverEncoding, $supported_encodings) && 'US-ASCII' != $serverEncoding) {
-            throw new InvalidParameterException('"'.$serverEncoding.'" is not supported by setServerEncoding(). Your system only supports these encodings: US-ASCII, '.\implode(', ', $supported_encodings));
+            throw new InvalidParameterException('"' . $serverEncoding . '" is not supported by setServerEncoding(). Your system only supports these encodings: US-ASCII, ' . \implode(', ', $supported_encodings));
         }
 
         $this->serverEncoding = $serverEncoding;
@@ -280,7 +284,7 @@ class Mailbox
         $supported_options = [SE_FREE, SE_UID];
 
         if (!\in_array($imapSearchOption, $supported_options, true)) {
-            throw new InvalidParameterException('"'.$imapSearchOption.'" is not supported by setImapSearchOption(). Supported options are SE_FREE and SE_UID.');
+            throw new InvalidParameterException('"' . $imapSearchOption . '" is not supported by setImapSearchOption(). Supported options are SE_FREE and SE_UID.');
         }
 
         $this->imapSearchOption = $imapSearchOption;
@@ -351,7 +355,7 @@ class Mailbox
     {
         if (0 !== $options) {
             if (($options & self::IMAP_OPTIONS_SUPPORTED_VALUES) !== $options) {
-                throw new InvalidParameterException('Please check your option for setConnectionArgs()! Unsupported option "'.$options.'". Available options: https://www.php.net/manual/de/function.imap-open.php');
+                throw new InvalidParameterException('Please check your option for setConnectionArgs()! Unsupported option "' . $options . '". Available options: https://www.php.net/manual/de/function.imap-open.php');
             }
             $this->imapOptions = $options;
         }
@@ -390,7 +394,7 @@ class Mailbox
             throw new InvalidParameterException('setAttachmentsDir() expects a string as first parameter!');
         }
         if (!\is_dir($attachmentsDir)) {
-            throw new InvalidParameterException('Directory "'.$attachmentsDir.'" not found');
+            throw new InvalidParameterException('Directory "' . $attachmentsDir . '" not found');
         }
         $this->attachmentsDir = \rtrim(\realpath($attachmentsDir), '\\/');
     }
@@ -863,16 +867,16 @@ class Mailbox
         if (\count($mails)) {
             foreach ($mails as $index => &$mail) {
                 if (isset($mail->subject) && !\is_string($mail->subject)) {
-                    throw new UnexpectedValueException('subject property at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() was not a string!');
+                    throw new UnexpectedValueException('subject property at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() was not a string!');
                 }
                 if (isset($mail->from) && !\is_string($mail->from)) {
-                    throw new UnexpectedValueException('from property at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() was not a string!');
+                    throw new UnexpectedValueException('from property at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() was not a string!');
                 }
                 if (isset($mail->sender) && !\is_string($mail->sender)) {
-                    throw new UnexpectedValueException('sender property at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() was not a string!');
+                    throw new UnexpectedValueException('sender property at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() was not a string!');
                 }
                 if (isset($mail->to) && !\is_string($mail->to)) {
-                    throw new UnexpectedValueException('to property at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() was not a string!');
+                    throw new UnexpectedValueException('to property at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() was not a string!');
                 }
 
                 if (isset($mail->subject) and !empty(\trim($mail->subject))) {
@@ -951,7 +955,7 @@ class Mailbox
     public function sortMails(
         int $criteria = SORTARRIVAL,
         bool $reverse = true,
-        ? string $searchCriteria = 'ALL',
+        ?string $searchCriteria = 'ALL',
         string $charset = null
     ): array {
         return Imap::sort(
@@ -1052,31 +1056,31 @@ class Mailbox
         $head = \imap_rfc822_parse_headers($headersRaw);
 
         if (isset($head->date) && !\is_string($head->date)) {
-            throw new UnexpectedValueException('date property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not a string!');
+            throw new UnexpectedValueException('date property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not a string!');
         }
         if (isset($head->Date) && !\is_string($head->Date)) {
-            throw new UnexpectedValueException('Date property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not a string!');
+            throw new UnexpectedValueException('Date property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not a string!');
         }
         if (isset($head->subject) && !\is_string($head->subject)) {
-            throw new UnexpectedValueException('subject property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not a string!');
+            throw new UnexpectedValueException('subject property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not a string!');
         }
         if (isset($head->from) && !\is_array($head->from)) {
-            throw new UnexpectedValueException('from property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('from property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
         if (isset($head->sender) && !\is_array($head->sender)) {
-            throw new UnexpectedValueException('sender property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('sender property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
         if (isset($head->to) && !\is_array($head->to)) {
-            throw new UnexpectedValueException('to property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('to property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
         if (isset($head->cc) && !\is_array($head->cc)) {
-            throw new UnexpectedValueException('cc property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('cc property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
         if (isset($head->bcc) && !\is_array($head->bcc)) {
-            throw new UnexpectedValueException('bcc property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('bcc property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
         if (isset($head->reply_to) && !\is_array($head->reply_to)) {
-            throw new UnexpectedValueException('reply_to property of parsed headers corresponding to argument 1 passed to '.__METHOD__.'() was present but not an array!');
+            throw new UnexpectedValueException('reply_to property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not an array!');
         }
 
         $header = new IncomingMailHeader();
@@ -1160,7 +1164,7 @@ class Mailbox
 
         if (isset($head->message_id)) {
             if (!\is_string($head->message_id)) {
-                throw new UnexpectedValueException('Message ID was expected to be a string, '.\gettype($head->message_id).' found!');
+                throw new UnexpectedValueException('Message ID was expected to be a string, ' . \gettype($head->message_id) . ' found!');
             }
             $header->messageId = $head->message_id;
         }
@@ -1183,22 +1187,22 @@ class Mailbox
     public function flattenParts(array $messageParts, array $flattenedParts = [], string $prefix = '', int $index = 1, bool $fullPrefix = true): array
     {
         foreach ($messageParts as $part) {
-            $flattenedParts[$prefix.$index] = $part;
+            $flattenedParts[$prefix . $index] = $part;
             if (isset($part->parts)) {
                 /** @var stdClass[] */
                 $part_parts = $part->parts;
 
                 if (self::PART_TYPE_TWO == $part->type) {
                     /** @var array<string, stdClass> */
-                    $flattenedParts = $this->flattenParts($part_parts, $flattenedParts, $prefix.$index.'.', 0, false);
+                    $flattenedParts = $this->flattenParts($part_parts, $flattenedParts, $prefix . $index . '.', 0, false);
                 } elseif ($fullPrefix) {
                     /** @var array<string, stdClass> */
-                    $flattenedParts = $this->flattenParts($part_parts, $flattenedParts, $prefix.$index.'.');
+                    $flattenedParts = $this->flattenParts($part_parts, $flattenedParts, $prefix . $index . '.');
                 } else {
                     /** @var array<string, stdClass> */
                     $flattenedParts = $this->flattenParts($part_parts, $flattenedParts, $prefix);
                 }
-                unset($flattenedParts[$prefix.$index]->parts);
+                unset($flattenedParts[$prefix . $index]->parts);
             }
             ++$index;
         }
@@ -1252,9 +1256,9 @@ class Mailbox
     public function downloadAttachment(DataPartInfo $dataInfo, array $params, object $partStructure, bool $emlOrigin = false): IncomingMailAttachment
     {
         if ('RFC822' == $partStructure->subtype && isset($partStructure->disposition) && 'attachment' == $partStructure->disposition) {
-            $fileName = \strtolower($partStructure->subtype).'.eml';
+            $fileName = \strtolower($partStructure->subtype) . '.eml';
         } elseif ('ALTERNATIVE' == $partStructure->subtype) {
-            $fileName = \strtolower($partStructure->subtype).'.eml';
+            $fileName = \strtolower($partStructure->subtype) . '.eml';
         } elseif ((!isset($params['filename']) or empty(\trim($params['filename']))) && (!isset($params['name']) or empty(\trim($params['name'])))) {
             $fileName = \strtolower($partStructure->subtype);
         } else {
@@ -1298,7 +1302,7 @@ class Mailbox
         $charset = isset($params['charset']) ? $params['charset'] : null;
 
         if (isset($charset) && !\is_string($charset)) {
-            throw new InvalidArgumentException('Argument 2 passed to '.__METHOD__.'() must specify charset as a string when specified!');
+            throw new InvalidArgumentException('Argument 2 passed to ' . __METHOD__ . '() must specify charset as a string when specified!');
         }
         $attachment->charset = (isset($charset) and !empty(\trim($charset))) ? $charset : null;
         $attachment->emlOrigin = $emlOrigin;
@@ -1314,12 +1318,12 @@ class Mailbox
         $attachmentsDir = $this->getAttachmentsDir();
 
         if (null != $attachmentsDir) {
-            $fileSysName = \bin2hex(\random_bytes(16)).'.bin';
-            $filePath = $attachmentsDir.DIRECTORY_SEPARATOR.$fileSysName;
+            $fileSysName = \bin2hex(\random_bytes(16)) . '.bin';
+            $filePath = $attachmentsDir . DIRECTORY_SEPARATOR . $fileSysName;
 
             if (\strlen($filePath) > self::MAX_LENGTH_FILEPATH) {
                 $ext = \pathinfo($filePath, PATHINFO_EXTENSION);
-                $filePath = \substr($filePath, 0, self::MAX_LENGTH_FILEPATH - 1 - \strlen($ext)).'.'.$ext;
+                $filePath = \substr($filePath, 0, self::MAX_LENGTH_FILEPATH - 1 - \strlen($ext)) . '.' . $ext;
             }
             $attachment->setFilePath($filePath);
             $attachment->saveToDisk();
@@ -1338,35 +1342,35 @@ class Mailbox
      */
     public function convertToUtf8(string $string, string $fromCharset): string
     {
-		$fromCharset = mb_strtolower($fromCharset);
-		$newString = '';
+        $fromCharset = mb_strtolower($fromCharset);
+        $newString = '';
 
-		if ('default' === $fromCharset) {
-			$fromCharset = $this->decodeMimeStrDefaultCharset;
-		}
+        if ('default' === $fromCharset) {
+            $fromCharset = $this->decodeMimeStrDefaultCharset;
+        }
 
-		switch ($fromCharset) {
-			case 'default': // Charset default is already ASCII (not encoded)
-			case 'utf-8': // Charset UTF-8 is OK
-				$newString .= $string;
-				break;
-			default:
-				// If charset exists in mb_list_encodings(), convert using mb_convert function
-				if (\in_array($fromCharset, $this->lowercase_mb_list_encodings(), true)) {
-					$newString .= \mb_convert_encoding($string, 'UTF-8', $fromCharset);
-				} else {
-					// Fallback: Try to convert with iconv()
-					$iconv_converted_string = @\iconv($fromCharset, 'UTF-8', $string);
-					if (!$iconv_converted_string) {
-						// If iconv() could also not convert, return string as it is
-						// (unknown charset)
-						$newString .= $string;
-					} else {
-						$newString .= $iconv_converted_string;
-					}
-				}
-				break;
-		}
+        switch ($fromCharset) {
+            case 'default': // Charset default is already ASCII (not encoded)
+            case 'utf-8': // Charset UTF-8 is OK
+                $newString .= $string;
+                break;
+            default:
+                // If charset exists in mb_list_encodings(), convert using mb_convert function
+                if (\in_array($fromCharset, $this->lowercase_mb_list_encodings(), true)) {
+                    $newString .= \mb_convert_encoding($string, 'UTF-8', $fromCharset);
+                } else {
+                    // Fallback: Try to convert with iconv()
+                    $iconv_converted_string = @\iconv($fromCharset, 'UTF-8', $string);
+                    if (!$iconv_converted_string) {
+                        // If iconv() could also not convert, return string as it is
+                        // (unknown charset)
+                        $newString .= $string;
+                    } else {
+                        $newString .= $iconv_converted_string;
+                    }
+                }
+                break;
+        }
 
         return $newString;
     }
@@ -1453,7 +1457,7 @@ class Mailbox
     {
         $option = (SE_UID == $this->imapSearchOption) ? FT_UID : 0;
 
-        return Imap::fetchheader($this->getImapStream(), $mailId, $option | FT_PREFETCHTEXT).Imap::body($this->getImapStream(), $mailId, $option);
+        return Imap::fetchheader($this->getImapStream(), $mailId, $option | FT_PREFETCHTEXT) . Imap::body($this->getImapStream(), $mailId, $option);
     }
 
     /**
@@ -1530,7 +1534,7 @@ class Mailbox
         }
 
         if (!\is_string($message)) {
-            throw new InvalidArgumentException('Argument 1 passed to '.__METHOD__.' must be a string or envelope/body pair.');
+            throw new InvalidArgumentException('Argument 1 passed to ' . __METHOD__ . ' must be a string or envelope/body pair.');
         }
 
         return Imap::append(
@@ -1620,7 +1624,7 @@ class Mailbox
     protected function initMailPart(IncomingMail $mail, object $partStructure, $partNum, bool $markAsSeen = true, bool $emlParse = false): void
     {
         if (!isset($mail->id)) {
-            throw new InvalidArgumentException('Argument 1 passeed to '.__METHOD__.'() did not have the id property set!');
+            throw new InvalidArgumentException('Argument 1 passeed to ' . __METHOD__ . '() did not have the id property set!');
         }
 
         $options = (SE_UID === $this->imapSearchOption) ? FT_UID : 0;
@@ -1654,11 +1658,9 @@ class Mailbox
 
         $isAttachment = isset($params['filename']) || isset($params['name']) || isset($partStructure->id);
 
-        $dispositionAttachment = (
-            isset($partStructure->disposition) &&
+        $dispositionAttachment = (isset($partStructure->disposition) &&
             \is_string($partStructure->disposition) &&
-            'attachment' === \mb_strtolower($partStructure->disposition)
-        );
+            'attachment' === \mb_strtolower($partStructure->disposition));
 
         // ignore contentId on body when mail isn't multipart (https://github.com/barbushin/php-imap/issues/71)
         if (
@@ -1687,9 +1689,10 @@ class Mailbox
         }
 
         // Do NOT parse attachments, when getAttachmentsIgnore() is true
-        if ($this->getAttachmentsIgnore()
+        if (
+            $this->getAttachmentsIgnore()
             && (TYPEMULTIPART !== $partStructure->type
-            && (TYPETEXT !== $partStructure->type || !\in_array(\mb_strtolower($partStructure->subtype), ['plain', 'html'], true)))
+                && (TYPETEXT !== $partStructure->type || !\in_array(\mb_strtolower($partStructure->subtype), ['plain', 'html'], true)))
         ) {
             return;
         }
@@ -1714,9 +1717,9 @@ class Mailbox
                     $this->initMailPart($mail, $subPartStructure, $partNum, $markAsSeen);
                 } elseif ('RFC822' === $partStructure->subtype && isset($partStructure->disposition) && 'attachment' === $partStructure->disposition) {
                     //If it comes from am EML attachment, download each part separately as a file
-                    $this->initMailPart($mail, $subPartStructure, $partNum.'.'.($subPartNum + 1), $markAsSeen, true);
+                    $this->initMailPart($mail, $subPartStructure, $partNum . '.' . ($subPartNum + 1), $markAsSeen, true);
                 } else {
-                    $this->initMailPart($mail, $subPartStructure, $partNum.'.'.($subPartNum + 1), $markAsSeen);
+                    $this->initMailPart($mail, $subPartStructure, $partNum . '.' . ($subPartNum + 1), $markAsSeen);
                 }
             }
         } else {
@@ -1730,7 +1733,7 @@ class Mailbox
                 } elseif (!$partStructure->ifdisposition) {
                     $mail->addDataPartInfo($dataInfo, DataPartInfo::TEXT_HTML);
                 } elseif (!\is_string($partStructure->disposition)) {
-                    throw new InvalidArgumentException('disposition property of object passed as argument 2 to '.__METHOD__.'() was present but not a string!');
+                    throw new InvalidArgumentException('disposition property of object passed as argument 2 to ' . __METHOD__ . '() was present but not a string!');
                 } elseif (!$dispositionAttachment) {
                     $mail->addDataPartInfo($dataInfo, DataPartInfo::TEXT_HTML);
                 }
@@ -1767,7 +1770,7 @@ class Mailbox
         if (empty(\trim($folder))) {
             return $this->imapPath;
         } elseif ('}' === \substr($this->imapPath, -1)) {
-            return $this->imapPath.$folder;
+            return $this->imapPath . $folder;
         } elseif (true === $absolute) {
             $folder = ('/' === $folder) ? '' : $folder;
             $posConnectionDefinitionEnd = \strpos($this->imapPath, '}');
@@ -1776,10 +1779,10 @@ class Mailbox
                 throw new UnexpectedValueException('"}" was not present in IMAP path!');
             }
 
-            return \substr($this->imapPath, 0, $posConnectionDefinitionEnd + 1).$folder;
+            return \substr($this->imapPath, 0, $posConnectionDefinitionEnd + 1) . $folder;
         }
 
-        return $this->imapPath.$this->getPathDelimiter().$folder;
+        return $this->imapPath . $this->getPathDelimiter() . $folder;
     }
 
     /**
@@ -1798,15 +1801,15 @@ class Mailbox
             $recipientPersonal = isset($recipient->personal) ? $recipient->personal : null;
 
             if (!\is_string($recipientMailbox)) {
-                throw new UnexpectedValueException('mailbox was present on argument 1 passed to '.__METHOD__.'() but was not a string!');
+                throw new UnexpectedValueException('mailbox was present on argument 1 passed to ' . __METHOD__ . '() but was not a string!');
             } elseif (!\is_string($recipientHost)) {
-                throw new UnexpectedValueException('host was present on argument 1 passed to '.__METHOD__.'() but was not a string!');
+                throw new UnexpectedValueException('host was present on argument 1 passed to ' . __METHOD__ . '() but was not a string!');
             } elseif (null !== $recipientPersonal && !\is_string($recipientPersonal)) {
-                throw new UnexpectedValueException('personal was present on argument 1 passed to '.__METHOD__.'() but was not a string!');
+                throw new UnexpectedValueException('personal was present on argument 1 passed to ' . __METHOD__ . '() but was not a string!');
             }
 
             if ('' !== \trim($recipientMailbox) && '' !== \trim($recipientHost)) {
-                $recipientEmail = \strtolower($recipientMailbox.'@'.$recipientHost);
+                $recipientEmail = \strtolower($recipientMailbox . '@' . $recipientHost);
                 $recipientName = (\is_string($recipientPersonal) and '' !== \trim($recipientPersonal)) ? $this->decodeMimeStr($recipientPersonal) : null;
 
                 return [
@@ -1830,15 +1833,15 @@ class Mailbox
         if ($t) {
             foreach ($t as $index => $item) {
                 if (!\is_object($item)) {
-                    throw new UnexpectedValueException('Index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() corresponds to a non-object value, '.\gettype($item).' given!');
+                    throw new UnexpectedValueException('Index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() corresponds to a non-object value, ' . \gettype($item) . ' given!');
                 }
                 /** @var scalar|array|object|resource|null */
                 $item_name = isset($item->name) ? $item->name : null;
 
                 if (!isset($item->name, $item->attributes, $item->delimiter)) {
-                    throw new UnexpectedValueException('The object at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() was missing one or more of the required properties "name", "attributes", "delimiter"!');
+                    throw new UnexpectedValueException('The object at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() was missing one or more of the required properties "name", "attributes", "delimiter"!');
                 } elseif (!\is_string($item_name)) {
-                    throw new UnexpectedValueException('The object at index '.(string) $index.' of argument 1 passed to '.__METHOD__.'() has a non-string value for the name property!');
+                    throw new UnexpectedValueException('The object at index ' . (string) $index . ' of argument 1 passed to ' . __METHOD__ . '() has a non-string value for the name property!');
                 }
 
                 // https://github.com/barbushin/php-imap/issues/339
@@ -1880,7 +1883,7 @@ class Mailbox
         }
 
         /** @var string */
-        $out[] = \strtolower($t[0]->mailbox.'@'.(string) $out[0]);
+        $out[] = \strtolower($t[0]->mailbox . '@' . (string) $out[0]);
 
         /** @var array{0:string|null, 1:string|null, 2:string} */
         return $out;
@@ -1917,7 +1920,7 @@ class Mailbox
              * @return string
              */
             static function ($sender) use ($criteria) {
-                return $criteria.' FROM '.\mb_strtolower($sender);
+                return $criteria . ' FROM ' . \mb_strtolower($sender);
             },
             $senders
         )));
