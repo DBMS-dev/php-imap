@@ -86,7 +86,7 @@ final class Imap
         $imap_stream = self::EnsureConnection($imap_stream, __METHOD__, 1);
 
         if (null !== $options && null !== $internal_date) {
-            $result = \imap_append(
+            $result = @\imap_append(
                 $imap_stream,
                 $mailbox,
                 $message,
@@ -94,9 +94,9 @@ final class Imap
                 $internal_date
             );
         } elseif (null !== $options) {
-            $result = \imap_append($imap_stream, $mailbox, $message, $options);
+            $result = @\imap_append($imap_stream, $mailbox, $message, $options);
         } else {
-            $result = \imap_append($imap_stream, $mailbox, $message);
+            $result = @\imap_append($imap_stream, $mailbox, $message);
         }
 
         if (false === $result) {

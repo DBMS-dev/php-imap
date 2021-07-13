@@ -89,10 +89,10 @@ class DataPartInfo
     {
         switch ($this->encoding) {
             case ENC8BIT:
-                $this->data = \imap_utf8((string) $this->data);
+                $this->data = @\imap_utf8((string) $this->data);
                 break;
             case ENCBINARY:
-                $this->data = \imap_binary((string) $this->data);
+                $this->data = @\imap_binary((string) $this->data);
                 break;
             case ENCBASE64:
                 $this->data = \base64_decode((string) $this->data, false);
@@ -110,7 +110,7 @@ class DataPartInfo
         if (isset($this->charset) and !empty(\trim($this->charset))) {
             $this->data = $this->mail->convertToUtf8(
                 (string) $this->data, // Data to convert
-				$this->charset
+                $this->charset
             );
         }
 

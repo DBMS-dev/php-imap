@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Mailbox - PHPUnit tests.
  *
  * @author Sebastian Kraetzig <sebastian-kraetzig@gmx.de>
  */
+
 declare(strict_types=1);
 
 namespace PhpImap;
@@ -102,12 +104,10 @@ final class MailboxTest extends TestCase
 
         $supported = \mb_list_encodings();
 
-        foreach (
-            [
+        foreach ([
                 'Windows-1251',
                 'Windows-1252',
-            ] as $perhaps
-        ) {
+            ] as $perhaps) {
             if (
                 \in_array(\trim($perhaps), $supported, true) ||
                 \in_array(\strtoupper(\trim($perhaps)), $supported, true)
@@ -654,7 +654,7 @@ final class MailboxTest extends TestCase
                 $key = \implode(', ', $fields);
 
                 yield $key => ['assertNull', $value, 0, []];
-                yield ('INVALID + '.$key) => ['expectException', $value | 128, 0, []];
+                yield ('INVALID + ' . $key) => ['expectException', $value | 128, 0, []];
             }
         }
     }
@@ -725,7 +725,7 @@ final class MailboxTest extends TestCase
     {
         return [
             ['bm8tcmVwbHlAZXhhbXBsZS5jb20=', 'no-reply@example.com'],
-            ['TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4K', 'Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.'."\n"],
+            ['TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4K', 'Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.' . "\n"],
             ['SSBjYW4gZWF0IGdsYXNzIGFuZCBpdCBkb2VzIG5vdCBodXJ0IG1lLg==', 'I can eat glass and it does not hurt me.'],
             ['77u/4KSV4KS+4KSa4KSCIOCktuCkleCljeCkqOCli+CkruCljeCkr+CkpOCljeCkpOClgeCkruCljSDgpaQg4KSo4KWL4KSq4KS54KS/4KSo4KS44KWN4KSk4KS/IOCkruCkvuCkruCljSDgpaU=', '﻿काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥'],
             ['SmUgcGV1eCBtYW5nZXIgZHUgdmVycmUsIMOnYSBuZSBtZSBmYWl0IHBhcyBtYWwu', 'Je peux manger du verre, ça ne me fait pas mal.'],
@@ -739,7 +739,7 @@ final class MailboxTest extends TestCase
      */
     public function testBase64Decode(string $input, string $expected): void
     {
-        $this->assertSame($expected, \imap_base64(\preg_replace('~[^a-zA-Z0-9+=/]+~s', '', $input)));
+        $this->assertSame($expected, @\imap_base64(\preg_replace('~[^a-zA-Z0-9+=/]+~s', '', $input)));
         $this->assertSame($expected, \base64_decode($input, false));
     }
 
@@ -765,7 +765,7 @@ final class MailboxTest extends TestCase
                 __DIR__,
                 __FILE__,
                 InvalidParameterException::class,
-                'Directory "'.__FILE__.'" not found',
+                'Directory "' . __FILE__ . '" not found',
             ],
         ];
     }

@@ -447,7 +447,7 @@ class Mailbox
 
     public function hasImapStream(): bool
     {
-        return \is_resource($this->imapStream) && \imap_ping($this->imapStream);
+        return \is_resource($this->imapStream) && @\imap_ping($this->imapStream);
     }
 
     /**
@@ -1053,7 +1053,7 @@ class Mailbox
          * sender?:HOSTNAMEANDADDRESS
          * }
          */
-        $head = \imap_rfc822_parse_headers($headersRaw);
+        $head = @\imap_rfc822_parse_headers($headersRaw);
 
         if (isset($head->date) && !\is_string($head->date)) {
             throw new UnexpectedValueException('date property of parsed headers corresponding to argument 1 passed to ' . __METHOD__ . '() was present but not a string!');
