@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Live Mailbox - PHPUnit tests.
  *
@@ -6,6 +7,7 @@
  *
  * @author BAPCLTD-Marv
  */
+
 declare(strict_types=1);
 
 namespace PhpImap;
@@ -31,7 +33,7 @@ class LiveMailboxIssue501Test extends AbstractLiveMailboxTest
      */
     public function testDecodeMimeStrEmpty(): void
     {
-        $this->assertSame([], \imap_mime_header_decode(''));
+        $this->assertSame([], @\imap_mime_header_decode(''));
 
         // example credentials nabbed from MailboxTest::testConstructorTrimsPossibleVariables()
         $imapPath = ' {imap.example.com:993/imap/ssl}INBOX     ';
@@ -71,7 +73,7 @@ class LiveMailboxIssue501Test extends AbstractLiveMailboxTest
 
         try {
             $envelope = [
-                'subject' => 'barbushin/php-imap#501: '.\bin2hex(\random_bytes(16)),
+                'subject' => 'barbushin/php-imap#501: ' . \bin2hex(\random_bytes(16)),
             ];
 
             list($search_criteria) = $this->SubjectSearchCriteriaAndSubject(
@@ -83,11 +85,9 @@ class LiveMailboxIssue501Test extends AbstractLiveMailboxTest
             $this->assertCount(
                 0,
                 $search,
-                (
-                    'If a subject was found,'.
-                    ' then the message is insufficiently unique to assert that'.
-                    ' a newly-appended message was actually created.'
-                )
+                ('If a subject was found,' .
+                    ' then the message is insufficiently unique to assert that' .
+                    ' a newly-appended message was actually created.')
             );
 
             $mailbox->appendMessageToMailbox(Imap::mail_compose(
@@ -105,11 +105,9 @@ class LiveMailboxIssue501Test extends AbstractLiveMailboxTest
             $this->assertCount(
                 1,
                 $search,
-                (
-                    'If a subject was not found, '.
-                    ' then Mailbox::appendMessageToMailbox() failed'.
-                    ' despite not throwing an exception.'
-                )
+                ('If a subject was not found, ' .
+                    ' then Mailbox::appendMessageToMailbox() failed' .
+                    ' despite not throwing an exception.')
             );
 
             $mail = $mailbox->getMail($search[0], false);

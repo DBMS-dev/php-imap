@@ -708,7 +708,7 @@ final class Imap
         $result = @\imap_open($mailbox, $username, $password, $options, $n_retries, $params);
 
         if (!$result) {
-            $lastError = \imap_last_error();
+            $lastError = @\imap_last_error();
 
             if ('' !== \trim($lastError)) {
                 throw new UnexpectedValueException('IMAP error:' . $lastError);

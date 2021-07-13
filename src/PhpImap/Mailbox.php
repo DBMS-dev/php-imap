@@ -1390,7 +1390,7 @@ class Mailbox
     {
         $newString = '';
         /** @var list<object{charset?:string, text?:string}>|false */
-        $elements = \imap_mime_header_decode($string);
+        $elements = @\imap_mime_header_decode($string);
 
         if (false === $elements) {
             return $string;
