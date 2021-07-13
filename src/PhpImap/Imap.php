@@ -194,7 +194,7 @@ final class Imap
         $flag = $flag;
         $result = true;
         if ($imap_stream && is_resource($imap_stream)) {
-            $result = \imap_close(self::EnsureConnection($imap_stream, __METHOD__, 1), $flag);
+            $result = @\imap_close(self::EnsureConnection($imap_stream, __METHOD__, 1), $flag);
 
             if (false === $result) {
                 $message = 'Could not close imap connection';
