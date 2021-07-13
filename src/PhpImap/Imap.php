@@ -116,7 +116,7 @@ final class Imap
     ): string {
         \imap_errors(); // flush errors
 
-        $result = \imap_body(
+        $result = @\imap_body(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $msg_number,
             $options
@@ -136,7 +136,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_check(self::EnsureConnection($imap_stream, __METHOD__, 1));
+        $result = @\imap_check(self::EnsureConnection($imap_stream, __METHOD__, 1));
 
         if (false === $result) {
             throw new UnexpectedValueException('Could not check imap mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_check'));
@@ -160,7 +160,7 @@ final class Imap
     ): bool {
         \imap_errors(); // flush errors
 
-        $result = \imap_clearflag_full(
+        $result = @\imap_clearflag_full(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             self::encodeStringToUtf7Imap(static::EnsureRange(
                 $sequence,
@@ -220,7 +220,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_createmailbox(
+        $result = @\imap_createmailbox(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             static::encodeStringToUtf7Imap($mailbox)
         );
@@ -256,7 +256,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_delete(
+        $result = @\imap_delete(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $msg_number,
             $options
@@ -278,7 +278,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_deletemailbox(
+        $result = @\imap_deletemailbox(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             static::encodeStringToUtf7Imap($mailbox)
         );
@@ -299,7 +299,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_expunge(
+        $result = @\imap_expunge(
             self::EnsureConnection($imap_stream, __METHOD__, 1)
         );
 
@@ -325,7 +325,7 @@ final class Imap
     ): array {
         \imap_errors(); // flush errors
 
-        $result = \imap_fetch_overview(
+        $result = @\imap_fetch_overview(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             self::encodeStringToUtf7Imap(self::EnsureRange(
                 $sequence,
@@ -360,7 +360,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_fetchbody(
+        $result = @\imap_fetchbody(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $msg_number,
             self::encodeStringToUtf7Imap((string) $section),
@@ -384,7 +384,7 @@ final class Imap
     ): string {
         \imap_errors(); // flush errors
 
-        $result = \imap_fetchheader(
+        $result = @\imap_fetchheader(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $msg_number,
             $options
@@ -409,7 +409,7 @@ final class Imap
     ): object {
         \imap_errors(); // flush errors
 
-        $result = \imap_fetchstructure(
+        $result = @\imap_fetchstructure(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $msg_number,
             $options
@@ -434,7 +434,7 @@ final class Imap
     ): array {
         \imap_errors(); // flush errors
 
-        $result = \imap_get_quotaroot(
+        $result = @\imap_get_quotaroot(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             self::encodeStringToUtf7Imap($quota_root)
         );
@@ -460,7 +460,7 @@ final class Imap
     ): array {
         \imap_errors(); // flush errors
 
-        $result = \imap_getmailboxes(
+        $result = @\imap_getmailboxes(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $ref,
             $pattern
@@ -498,7 +498,7 @@ final class Imap
     ): array {
         \imap_errors(); // flush errors
 
-        $result = \imap_getsubscribed(
+        $result = @\imap_getsubscribed(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             $ref,
             $pattern
@@ -519,7 +519,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_headers(
+        $result = @\imap_headers(
             self::EnsureConnection($imap_stream, __METHOD__, 1)
         );
 
@@ -541,7 +541,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_list(
+        $result = @\imap_list(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             static::encodeStringToUtf7Imap($ref),
             static::encodeStringToUtf7Imap($pattern)
@@ -579,7 +579,7 @@ final class Imap
      */
     public static function mail_compose(array $envelope, array $body): string
     {
-        return \imap_mail_compose($envelope, $body);
+        return @\imap_mail_compose($envelope, $body);
     }
 
     /**
@@ -596,7 +596,7 @@ final class Imap
     ): bool {
         \imap_errors(); // flush errors
 
-        $result = \imap_mail_copy(
+        $result = @\imap_mail_copy(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             static::encodeStringToUtf7Imap(self::EnsureRange(
                 $msglist,
@@ -629,7 +629,7 @@ final class Imap
     ): bool {
         \imap_errors(); // flush errors
 
-        $result = \imap_mail_move(
+        $result = @\imap_mail_move(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             static::encodeStringToUtf7Imap(self::EnsureRange(
                 $msglist,
@@ -655,7 +655,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_mailboxmsginfo(
+        $result = @\imap_mailboxmsginfo(
             self::EnsureConnection($imap_stream, __METHOD__, 1)
         );
 
@@ -673,7 +673,7 @@ final class Imap
     {
         \imap_errors(); // flush errors
 
-        $result = \imap_num_msg(self::EnsureConnection($imap_stream, __METHOD__, 1));
+        $result = @\imap_num_msg(self::EnsureConnection($imap_stream, __METHOD__, 1));
 
         if (false === $result) {
             throw new UnexpectedValueException('Could not get the number of messages in the mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_num_msg'));
@@ -745,7 +745,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_renamemailbox($imap_stream, $old_mbox, $new_mbox);
+        $result = @\imap_renamemailbox($imap_stream, $old_mbox, $new_mbox);
 
         if (!$result) {
             throw new UnexpectedValueException('Could not rename mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_renamemailbox'));
@@ -771,7 +771,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_reopen($imap_stream, $mailbox, $options, $n_retries);
+        $result = @\imap_reopen($imap_stream, $mailbox, $options, $n_retries);
 
         if (!$result) {
             throw new UnexpectedValueException('Could not reopen mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_reopen'));
@@ -799,7 +799,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_savebody($imap_stream, $file, $msg_number, $part_number, $options);
+        $result = @\imap_savebody($imap_stream, $file, $msg_number, $part_number, $options);
 
         if (!$result) {
             throw new UnexpectedValueException('Could not reopen mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_savebody'));
@@ -831,14 +831,14 @@ final class Imap
         }
 
         if (\is_string($charset)) {
-            $result = \imap_search(
+            $result = @\imap_search(
                 $imap_stream,
                 $criteria,
                 $options,
                 static::encodeStringToUtf7Imap($charset)
             );
         } else {
-            $result = \imap_search($imap_stream, $criteria, $options);
+            $result = @\imap_search($imap_stream, $criteria, $options);
         }
 
         if (!$result) {
@@ -873,7 +873,7 @@ final class Imap
     ): bool {
         \imap_errors(); // flush errors
 
-        $result = \imap_setflag_full(
+        $result = @\imap_setflag_full(
             self::EnsureConnection($imap_stream, __METHOD__, 1),
             self::encodeStringToUtf7Imap(static::EnsureRange(
                 $sequence,
@@ -918,7 +918,7 @@ final class Imap
         $criteria = $criteria;
 
         if (null !== $search_criteria && null !== $charset) {
-            $result = \imap_sort(
+            $result = @\imap_sort(
                 $imap_stream,
                 $criteria,
                 $reverse,
@@ -927,7 +927,7 @@ final class Imap
                 self::encodeStringToUtf7Imap($charset)
             );
         } elseif (null !== $search_criteria) {
-            $result = \imap_sort(
+            $result = @\imap_sort(
                 $imap_stream,
                 $criteria,
                 $reverse,
@@ -935,7 +935,7 @@ final class Imap
                 self::encodeStringToUtf7Imap($search_criteria)
             );
         } else {
-            $result = \imap_sort(
+            $result = @\imap_sort(
                 $imap_stream,
                 $criteria,
                 $reverse,
@@ -967,7 +967,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_status($imap_stream, $mailbox, $options);
+        $result = @\imap_status($imap_stream, $mailbox, $options);
 
         if (!$result) {
             throw new UnexpectedValueException('Could not get status of mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_status'));
@@ -989,7 +989,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_subscribe($imap_stream, $mailbox);
+        $result = @\imap_subscribe($imap_stream, $mailbox);
 
         if (false === $result) {
             throw new UnexpectedValueException('Could not subscribe to mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_subscribe'));
@@ -1010,7 +1010,7 @@ final class Imap
         /** @var int */
         $timeout_type = $timeout_type;
 
-        $result = \imap_timeout(
+        $result = @\imap_timeout(
             $timeout_type,
             $timeout
         );
@@ -1035,7 +1035,7 @@ final class Imap
 
         \imap_errors(); // flush errors
 
-        $result = \imap_unsubscribe($imap_stream, $mailbox);
+        $result = @\imap_unsubscribe($imap_stream, $mailbox);
 
         if (false === $result) {
             throw new UnexpectedValueException('Could not unsubscribe from mailbox!', 0, self::HandleErrors(\imap_errors(), 'imap_unsubscribe'));
